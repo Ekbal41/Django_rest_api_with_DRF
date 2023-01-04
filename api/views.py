@@ -111,6 +111,12 @@ class Books(APIView):
 
 
 class Update(APIView):
+    def IsAuth(self, token):
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+            return True
+        except jwt.ExpiredSignatureError:
+            return False
 
     def get_book_by_pk(self, pk):
         book = Book.objects.get(pk=pk)
