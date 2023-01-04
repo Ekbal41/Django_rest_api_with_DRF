@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Book(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
     number_of_pages = models.IntegerField()
     publish_date = models.DateTimeField()
