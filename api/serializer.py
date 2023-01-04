@@ -1,3 +1,4 @@
+# ------------------------------------------------------------------------------------------------
 # from rest_framework import serializers
 #
 # from api.models import Book
@@ -21,7 +22,7 @@
 #         instance.quantity = data.get('quantity', instance.quantity)
 #         instance.save()
 #         return instance
-
+# --------------------------------------------------------------------------------------------------
 
 from rest_framework import serializers
 from api.models import Book
