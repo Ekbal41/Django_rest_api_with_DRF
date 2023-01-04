@@ -64,6 +64,7 @@
 #         }, status=status.HTTP_404_NOT_FOUND)
 
 # ------------------------------------------------------------------------------------------------
+import jwt
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from rest_framework import status
@@ -73,10 +74,17 @@ from .serializer import BookSerializer
 
 
 class Books(APIView):
+    def IsAuth(self, token):
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+            return True
+        except jwt.ExpiredSignatureError:
+            return False
 
     def get(self, request):
         token = request.COOKIES.get('jwt')
-        if token:
+
+        if self.IsAuth(token):
             try:
                 books = Book.objects.all()  # Complex data
             except:
@@ -91,7 +99,7 @@ class Books(APIView):
 
     def post(self, request):
         token = request.COOKIES.get('jwt')
-        if token:
+        if self.IsAuth(token):
             book = BookSerializer(data=request.data)
             if book.is_valid():
                 book.save()
@@ -110,7 +118,7 @@ class Update(APIView):
 
     def put(self, request, pk):
         token = request.COOKIES.get('jwt')
-        if token:
+        if self.IsAuth(token):
             book = self.get_book_by_pk(pk)
             s = BookSerializer(book, data=request.data)
             if s.is_valid():
@@ -123,8 +131,8 @@ class Update(APIView):
 
     def get(self, request, pk):
         token = request.COOKIES.get('jwt')
-        if token:
-            book = book = self.get_book_by_pk(pk)
+        if self.IsAuth(token):
+            book = self.get_book_by_pk(pk)
             s = BookSerializer(book)
             return Response(s.data)
         else:
@@ -132,7 +140,7 @@ class Update(APIView):
 
     def delete(self, request, pk):
         token = request.COOKIES.get('jwt')
-        if token:
+        if self.IsAuth(token):
             book = book = self.get_book_by_pk(pk)
             book.delete()
             return Response({
